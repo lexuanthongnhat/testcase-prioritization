@@ -26,7 +26,7 @@ public class TestCasePrioritization {
 			TestCaseSelector selector = new TestCaseSelector(profileParser.getTestCases());
 
 			
-			Method method = Method.TOTAL;
+			Method method = Method.ADDITIONAL;
 			/*for (Criteria criteria : Criteria.values())
 				for (Method method : Method.values())*/
 			for (Criteria criteria : Criteria.values()) {
