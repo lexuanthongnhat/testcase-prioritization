@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #################
 ## Eclipse
 #################
@@ -63,3 +64,13 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+=======
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+>>>>>>> da57d29256d103c8d25afa66ff9a2fc525b9ca0b
