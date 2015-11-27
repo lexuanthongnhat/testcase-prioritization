@@ -1,43 +1,61 @@
 package edu.ucr.cs.nhatle.testprio;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
+import edu.ucr.cs.nhatle.testprio.TestCasePrioritization.Criteria;
 
 public class TestCase {
 	private int id;
-	private int numStatements;
-	private int numBranches;
-	private Set<Integer> statements = new HashSet<Integer>();
-	private Set<Integer> branches = new HashSet<Integer>();
+	private Map<Criteria, Integer> criteriaToNumMaxCoverages = new HashMap<Criteria, Integer>();
+	private Map<Criteria, Set<Integer>> criteriaToCoverages = new HashMap<Criteria, Set<Integer>>();
 		
 	public TestCase(int id) {
 		super();
 		this.id = id;		
 	}
-	public TestCase(int id, Set<Integer> statements, Set<Integer> branches) {
-		super();
-		this.id = id;
-		this.statements = statements;
-		this.branches = branches;
-	}
-	
-	public void addStatement(int num) {
-		statements.add(num);
-	}
-	
-	public void addBranch(int num) {
-		branches.add(num);
-	}
-	
+			
 	public int getId() {
 		return id;
 	}
-	public Set<Integer> getStatements() {
-		return statements;
+		
+	public Map<Criteria, Integer> getCriteriaToNumMaxCoverages() {
+		return criteriaToNumMaxCoverages;
 	}
-	public Set<Integer> getBranches() {
-		return branches;
+
+	public Map<Criteria, Set<Integer>> getCriteriaToCoverages() {
+		return criteriaToCoverages;
 	}
+	
+	public void addNumMaxCoverage(Criteria criteria, int num) {
+		criteriaToNumMaxCoverages.put(criteria, num);
+	}
+	
+	public void addCoverages(Criteria criteria, Set<Integer> coverages) {
+		criteriaToCoverages.put(criteria, coverages);
+	}
+	
+	public Set<Integer> getCoverages(Criteria criteria) {
+		return criteriaToCoverages.get(criteria);
+	}
+
+	public int getNumMaxCoverages(Criteria criteria) {
+		return criteriaToNumMaxCoverages.get(criteria);
+	}
+	
+	public void updateCombinedCoverages() {
+		criteriaToNumMaxCoverages.put(Criteria.COMBINATION, 
+				criteriaToNumMaxCoverages.get(Criteria.BRANCH) + criteriaToNumMaxCoverages.get(Criteria.STATEMENT));
+		
+		Set<Integer> combination = new HashSet<Integer>(criteriaToCoverages.get(Criteria.STATEMENT));
+		for (Integer branch : criteriaToCoverages.get(Criteria.BRANCH))
+			combination.add(-branch);
+		
+		criteriaToCoverages.put(Criteria.COMBINATION, combination);
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -58,24 +76,5 @@ public class TestCase {
 			return false;
 		return true;
 	}
-	
-	
-	@Override
-	public String toString() {
-		return "TestCase [id=" + id + ", numStatements=" + numStatements + ", numBranches=" + numBranches + "]";
-	}
-	public int getNumStatements() {
-		return numStatements;
-	}
-	public void setNumStatements(int numStatements) {
-		this.numStatements = numStatements;
-	}
-	public int getNumBranches() {
-		return numBranches;
-	}
-	public void setNumBranches(int numBranches) {
-		this.numBranches = numBranches;
-	}
-	
-	
+		
 }

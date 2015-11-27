@@ -5,7 +5,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import edu.ucr.cs.nhatle.testprio.TestCasePrioritization.Criteria;
 
 public class ProfileParser {
 	private final String STATEMENT_EXP = "^\\s+(#####|[1-9]+):\\s+[0-9]+:.*";
@@ -45,18 +49,20 @@ public class ProfileParser {
 		int lineNum = 1;
 		int numStatements = 0;
 		int numBranches = 0;
+		Set<Integer> statements = new HashSet<Integer>();
+		Set<Integer> branches = new HashSet<Integer>();
+		
 		try (BufferedReader reader = Files.newBufferedReader(Paths.get(profileFile))) {
 
 			String line = null;
 			while ((line = reader.readLine()) != null) {
 				if (line.matches(STATEMENT_EXP)) {
 					++numStatements;
-//					System.out.println(line);
 				}
 				
 				if (line.matches(STATEMENT_EXP_EXECUTED)) {
 					int codeLine = Integer.parseInt(line.split("\\s*:\\s*")[1]);					
-					testCase.addStatement(codeLine);
+					statements.add(codeLine);
 				}					
 				
 				if (line.matches(BRANCH_EXP)) {
@@ -64,7 +70,7 @@ public class ProfileParser {
 				}
 					
 				if (line.matches(BRANCH_EXP_TAKEN)) {
-					testCase.addBranch(lineNum);
+					branches.add(lineNum);
 				}
 				
 				++lineNum;
@@ -72,8 +78,12 @@ public class ProfileParser {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		testCase.setNumBranches(numBranches);
-		testCase.setNumStatements(numStatements);
+		
+		testCase.addNumMaxCoverage(Criteria.STATEMENT, numStatements);
+		testCase.addNumMaxCoverage(Criteria.BRANCH, numBranches);
+		testCase.addCoverages(Criteria.STATEMENT, statements);
+		testCase.addCoverages(Criteria.BRANCH, branches);
+		testCase.updateCombinedCoverages();
 		
 		return testCase;
 	}
