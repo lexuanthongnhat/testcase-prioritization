@@ -76,5 +76,10 @@ public class TestCase {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "TestCase [id=" + id + ", criteriaToNumMaxCoverages=" + criteriaToNumMaxCoverages + "]";
+	}
 		
 }
