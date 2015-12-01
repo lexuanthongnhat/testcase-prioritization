@@ -48,6 +48,7 @@ public class TestCaseSelector {
 		List<TestCase> selectedTestCases = new ArrayList<TestCase>();
 				
 		List<TestCase> orderedTestCases = new ArrayList<TestCase>(testCases);
+		
 		Collections.sort(orderedTestCases, new Comparator<TestCase>(){
 			@Override
 			public int compare(TestCase o1, TestCase o2) {

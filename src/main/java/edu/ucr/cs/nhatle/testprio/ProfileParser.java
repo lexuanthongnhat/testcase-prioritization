@@ -12,10 +12,11 @@ import java.util.Set;
 import edu.ucr.cs.nhatle.testprio.TestCasePrioritization.Criteria;
 
 public class ProfileParser {
-	private final String STATEMENT_EXP = "^\\s+(#####|[1-9]+):\\s+[0-9]+:.*";
-	private final String STATEMENT_EXP_EXECUTED = "^\\s+[1-9]+:\\s+[0-9]+:.*";
+	private final String STATEMENT_EXP = "^\\s+(#####|[0-9]+):\\s+[0-9]+:.*";
+	private final String STATEMENT_EXP_EXECUTED = "^\\s+[0-9]+:\\s+[0-9]+:.*";
 	private final String BRANCH_EXP = "^branch\\s+[0-9]+.*";
-	private final String BRANCH_EXP_TAKEN = "^branch\\s+[0-9]+\\s+taken\\s+[1-9]+.*";
+	private final String BRANCH_EXP_0 = "^branch\\s+[0-9]+\\s+taken\\s+0+.*";
+	private final String BRANCH_EXP_TAKEN = "^branch\\s+[0-9]+\\s+taken\\s+[0-9]+.*";
 	
 	private String benchmarksFolder;
 	private String program;
@@ -51,11 +52,13 @@ public class ProfileParser {
 		int numBranches = 0;
 		Set<Integer> statements = new HashSet<Integer>();
 		Set<Integer> branches = new HashSet<Integer>();
-		
+			
 		try (BufferedReader reader = Files.newBufferedReader(Paths.get(profileFile))) {
 
 			String line = null;
 			while ((line = reader.readLine()) != null) {
+
+				
 				if (line.matches(STATEMENT_EXP)) {
 					++numStatements;
 				}
@@ -69,7 +72,7 @@ public class ProfileParser {
 					numBranches++;
 				}
 					
-				if (line.matches(BRANCH_EXP_TAKEN)) {
+				if (line.matches(BRANCH_EXP_TAKEN) && !line.matches(BRANCH_EXP_0)) {
 					branches.add(lineNum);
 				}
 				
@@ -84,6 +87,7 @@ public class ProfileParser {
 		testCase.addCoverages(Criteria.STATEMENT, statements);
 		testCase.addCoverages(Criteria.BRANCH, branches);
 		testCase.updateCombinedCoverages();
+
 		
 		return testCase;
 	}
